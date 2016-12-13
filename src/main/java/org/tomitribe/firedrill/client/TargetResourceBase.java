@@ -31,12 +31,14 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Logger;
 
 import static org.tomitribe.firedrill.client.provider.ClientUtils.createClient;
 import static org.tomitribe.firedrill.client.provider.ClientUtils.getRandomInt;
 
-
 public abstract class TargetResourceBase implements Runnable {
+    private static Logger logger = Logger.getLogger(TargetResourceBase.class.getName());
+
     @Inject
     @Named("runningAtomic")
     private AtomicBoolean running;
@@ -81,6 +83,7 @@ public abstract class TargetResourceBase implements Runnable {
         //authMethod.preExecute(client);
         final WebTarget target = createWebTarget(client.target(targetUrl));
         final Response response = executeRequest(target);
+        logger.info(String.format("%s - %s - %d", getMethod(), target.getUri(), response.getStatus()));
         //authMethod.postExecute(client, response);
         return response;
     }
@@ -96,12 +99,15 @@ public abstract class TargetResourceBase implements Runnable {
 
     public abstract WebTarget createWebTarget(final WebTarget webTarget);
 
-    public abstract Response executeRequest(final WebTarget target);
+    public abstract String getMethod();
 
-    private void dispose(Response response) {
+    public Response executeRequest(final WebTarget target) {
+        return target.request().method(getMethod());
+    }
+
+    private void dispose(final Response response) {
         if (response != null) {
             try {
-                System.out.format("[%s] dispose() - response.status:%d \r\n", getClass().getSimpleName(), response.getStatus());
                 response.close();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -121,7 +127,6 @@ public abstract class TargetResourceBase implements Runnable {
         if (rateLimit < 10) {
             rateLimit = 10;
         }
-        System.out.println("sleep() - sleeping rateLimit:" + rateLimit);
         Thread.sleep(rateLimit);
     }
 

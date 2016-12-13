@@ -16,16 +16,24 @@
  */
 package org.tomitribe.firedrill.client.scenario;
 
+import javax.ws.rs.client.Entity;
+import java.util.function.Supplier;
+
+import static javax.ws.rs.client.Entity.entity;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
+
 /**
  * @author Roberto Cortez
  */
 public class Endpoint {
     private String path;
     private String method;
+    private Supplier supplier;
 
-    public Endpoint(final String path, final String method) {
+    public Endpoint(final String path, final String method, final Supplier supplier) {
         this.path = path;
         this.method = method;
+        this.supplier = supplier;
     }
 
     public String getPath() {
@@ -44,7 +52,15 @@ public class Endpoint {
         this.method = method;
     }
 
+    public Entity getEntity() {
+        return entity(supplier.get(), APPLICATION_JSON_TYPE);
+    }
+
     public static Endpoint of(final String endpoint, final String method) {
-        return new Endpoint(endpoint, method);
+        return new Endpoint(endpoint, method, () -> "");
+    }
+
+    public static Endpoint of(final String endpoint, final String method, final Supplier supplier) {
+        return new Endpoint(endpoint, method, supplier);
     }
 }
