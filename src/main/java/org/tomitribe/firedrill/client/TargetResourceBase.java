@@ -79,12 +79,12 @@ public abstract class TargetResourceBase implements Runnable {
 
     private Response post() throws Exception {
         Client client = createClient();
-        //AuthMethod authMethod = selectNextAuthMethod();
-        //authMethod.preExecute(client);
+        AuthMethod authMethod = selectNextAuthMethod();
+        authMethod.preExecute(client);
         final WebTarget target = createWebTarget(client.target(targetUrl));
         final Response response = executeRequest(target);
         logger.info(String.format("%s - %s - %d", getMethod(), target.getUri(), response.getStatus()));
-        //authMethod.postExecute(client, response);
+        authMethod.postExecute(client, response);
         return response;
     }
 
