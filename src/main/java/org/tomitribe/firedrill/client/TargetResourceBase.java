@@ -1,0 +1,144 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.tomitribe.firedrill.client;
+
+import org.tomitribe.firedrill.client.auth.AuthMethod;
+import org.tomitribe.sabot.Config;
+
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
+import java.util.Calendar;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static org.tomitribe.firedrill.client.provider.ClientUtils.createClient;
+import static org.tomitribe.firedrill.client.provider.ClientUtils.getRandomInt;
+
+
+public abstract class TargetResourceBase implements Runnable {
+    @Inject
+    @Named("runningAtomic")
+    private AtomicBoolean running;
+    @Inject
+    @Config("TargetResourceBase.targetUrl")
+    private String targetUrl;
+    @Any
+    @Inject
+    private Instance<AuthMethod> authMethodInstances;
+    private AuthMethod[] authMethods;
+    private int counter = 0;
+
+    @Override
+    public void run() {
+        Iterator<AuthMethod> amitr = authMethodInstances.iterator();
+        List<AuthMethod> authMethodsList = new LinkedList<>();
+        while (amitr.hasNext()) {
+            AuthMethod authMethod = amitr.next();
+            authMethodsList.add(authMethod);
+        }
+        authMethods = authMethodsList.toArray(new AuthMethod[authMethodsList.size()]);
+        while (true) {
+            Response response = null;
+            try {
+                if (running.get()) {
+                    sleep();
+                    response = post();
+                } else {
+                    Thread.sleep(1000L);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                dispose(response);
+            }
+        }
+    }
+
+    private Response post() throws Exception {
+        Client client = createClient();
+        //AuthMethod authMethod = selectNextAuthMethod();
+        //authMethod.preExecute(client);
+        final WebTarget target = createWebTarget(client.target(targetUrl));
+        final Response response = executeRequest(target);
+        //authMethod.postExecute(client, response);
+        return response;
+    }
+
+    private AuthMethod selectNextAuthMethod() {
+        if (counter >= authMethods.length) {
+            counter = 0;
+        }
+        AuthMethod authMethod = authMethods[counter];
+        counter++;
+        return authMethod;
+    }
+
+    public abstract WebTarget createWebTarget(final WebTarget webTarget);
+
+    public abstract Response executeRequest(final WebTarget target);
+
+    private void dispose(Response response) {
+        if (response != null) {
+            try {
+                System.out.format("[%s] dispose() - response.status:%d \r\n", getClass().getSimpleName(), response.getStatus());
+                response.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void sleep() throws Exception {
+        int rateLimit = 1;
+        int seconds = secondsSinceMidnight();
+        if (seconds <= (86400 / 2)) {
+            rateLimit = (seconds / 100);
+        } else {
+            rateLimit = (seconds - (((seconds - (86400 / 2)) * 2) - 1)) / 100;
+        }
+        rateLimit = randomizeRateLimit(rateLimit);
+        if (rateLimit < 10) {
+            rateLimit = 10;
+        }
+        System.out.println("sleep() - sleeping rateLimit:" + rateLimit);
+        Thread.sleep(rateLimit);
+    }
+
+    private int secondsSinceMidnight() {
+        Calendar calendar = Calendar.getInstance();
+        int hours = calendar.get(Calendar.HOUR_OF_DAY);
+        int minutes = calendar.get(Calendar.MINUTE);
+        int seconds = calendar.get(Calendar.SECOND);
+        minutes += hours * 60;
+        seconds += minutes * 60;
+        return seconds;
+    }
+
+    private int randomizeRateLimit(int rateLimit) {
+        int range = rateLimit / 4;
+        int nextInt = getRandomInt(range);
+        int base = (rateLimit * 3) / 4;
+        return nextInt + base;
+    }
+}
