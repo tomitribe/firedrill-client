@@ -64,7 +64,7 @@ public abstract class TargetResourceBase implements Runnable {
             Response response = null;
             try {
                 if (running.get()) {
-                    sleep();
+                    //sleep();
                     response = post();
                 } else {
                     Thread.sleep(1000L);

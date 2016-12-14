@@ -24,7 +24,6 @@ import org.tomitribe.firedrill.util.WeightedRandomResult;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Vetoed;
 import javax.inject.Inject;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
@@ -37,7 +36,6 @@ import static org.tomitribe.firedrill.client.provider.ClientUtils.getRandomInt;
 /**
  * @author Roberto Cortez
  */
-@Vetoed
 @ApplicationScoped
 public class MovieScenario extends TargetResourceBase {
     @Inject
