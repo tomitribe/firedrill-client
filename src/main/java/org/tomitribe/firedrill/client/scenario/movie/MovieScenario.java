@@ -46,12 +46,12 @@ public class MovieScenario extends TargetResourceBase {
     @PostConstruct
     private void init() {
         final List<Endpoint> allEndpoints = new ArrayList<>();
-        allEndpoints.add(Endpoint.of("music/rest/musics", "GET"));
-        allEndpoints.add(Endpoint.of("music/rest/musics/count", "GET"));
-        allEndpoints.add(Endpoint.of("music/rest/musics", "POST", this::generatePostData));
-        allEndpoints.add(Endpoint.of("music/rest/musics/1", "DELETE"));
-        //allEndpoints.add(Endpoint.of("movie/rest/musics/1", "PUT"));
-        allEndpoints.add(Endpoint.of("music/rest/musics/1", "GET"));
+        allEndpoints.add(Endpoint.of("movie/rest/movies", "GET"));
+        allEndpoints.add(Endpoint.of("movie/rest/movies/count", "GET"));
+        allEndpoints.add(Endpoint.of("movie/rest/movies", "POST", this::generatePostData));
+        allEndpoints.add(Endpoint.of("movie/rest/movies/1", "DELETE"));
+        //allEndpoints.add(Endpoint.of("movie/rest/movies/1", "PUT"));
+        allEndpoints.add(Endpoint.of("movie/rest/movies/1", "GET"));
 
         // GET endpoints are called more.
         final ArrayList<Endpoint> getEndpoints =
