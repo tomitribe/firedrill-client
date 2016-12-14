@@ -46,7 +46,9 @@ public class Controller implements Runnable {
         while (trbi.hasNext()) {
             TargetResourceBase next = trbi.next();
             System.out.println("run() - starting:" + next.getClass().getSimpleName());
-            mes.execute(next);
+            for (int i = 0; i < 5; i++) {
+                mes.execute(next);
+            }
         }
         running.set(true);
         System.out.println("run() - complete");
