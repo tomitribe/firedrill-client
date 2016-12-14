@@ -141,7 +141,7 @@ public abstract class TargetResourceBase implements Runnable {
     }
 
     private int randomizeRateLimit(int rateLimit) {
-        int range = rateLimit / 4;
+        int range = (rateLimit > 4 ? rateLimit : 4) / 4;
         int nextInt = getRandomInt(range);
         int base = (rateLimit * 3) / 4;
         return nextInt + base;
