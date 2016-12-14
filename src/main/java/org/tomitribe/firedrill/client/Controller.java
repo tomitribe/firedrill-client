@@ -16,24 +16,26 @@
  */
 package org.tomitribe.firedrill.client;
 
+import org.tomitribe.firedrill.client.scenario.movie.MovieScenario;
+import org.tomitribe.firedrill.client.scenario.twitter.TwitterScenario;
+
 import javax.annotation.Resource;
 import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @ApplicationScoped
 public class Controller implements Runnable {
     @Resource
     private ManagedExecutorService mes;
-    @Any
+
     @Inject
-    private Instance<TargetResourceBase> targetResources;
+    private MovieScenario movieScenario;
+    @Inject
+    private TwitterScenario twitterScenario;
 
     @Produces
     @Named("runningAtomic")
@@ -41,16 +43,11 @@ public class Controller implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("run() - starting executors");
-        Iterator<TargetResourceBase> trbi = targetResources.iterator();
-        while (trbi.hasNext()) {
-            TargetResourceBase next = trbi.next();
-            System.out.println("run() - starting:" + next.getClass().getSimpleName());
-            mes.execute(next);
-            mes.execute(next);
-            mes.execute(next);
-        }
+        mes.execute(movieScenario);
+        mes.execute(twitterScenario);
+        mes.execute(twitterScenario);
+        mes.execute(twitterScenario);
+        mes.execute(twitterScenario);
         running.set(true);
-        System.out.println("run() - complete");
     }
 }
