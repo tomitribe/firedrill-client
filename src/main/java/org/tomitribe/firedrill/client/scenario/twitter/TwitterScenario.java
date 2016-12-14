@@ -146,21 +146,15 @@ public class TwitterScenario extends TargetResourceBase {
                 Endpoint.of("twitter/api/users/suggestions/{slug}/members", "GET"),
                 Endpoint.of("twitter/api/users/report_spam", "POST"));
 
-        final ArrayList<Endpoint> getEndpoints =
-                allEndpoints.stream()
-                            .filter(e -> e.getMethod().equals("GET"))
-                            .collect(ArrayList::new, (list, endpoint) -> {
-                                list.add(endpoint);
-                                list.add(endpoint);
-                                list.add(endpoint);
-                                list.add(endpoint);
-                            }, ArrayList::addAll);
+        final ArrayList<Endpoint> endpoints = new ArrayList<>();
+        endpoints.addAll(allEndpoints.stream()
+                                     .filter(e -> e.getMethod().equals("GET"))
+                                     .collect(ArrayList::new, this::addRandom, ArrayList::addAll));
 
-        getEndpoints.addAll(allEndpoints);
-        shuffle(getEndpoints);
-        getEndpoints.stream().map(Endpoint::getPath).forEach(System.out::println);
-
-        endpointsToExecute = new WeightedRandomResult<>(getEndpoints);
+        endpoints.addAll(allEndpoints);
+        shuffle(endpoints);
+        endpoints.stream().map(Endpoint::getPath).forEach(System.out::println);
+        endpointsToExecute = new WeightedRandomResult<>(endpoints);
     }
 
     @Override
@@ -172,5 +166,11 @@ public class TwitterScenario extends TargetResourceBase {
     @Override
     public String getMethod() {
         return endpointScenario.getEndpoint().getMethod();
+    }
+
+    private void addRandom(final List<Endpoint> endpoints, final Endpoint endpoint) {
+          for (int i = 0; i < Math.random() * 10; i ++) {
+              endpoints.add(endpoint);
+          }
     }
 }
