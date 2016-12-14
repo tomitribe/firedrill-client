@@ -113,12 +113,18 @@
         <configuration>
           <removeDefaultWebapps>true</removeDefaultWebapps>
           <tomeeClassifier>plus</tomeeClassifier>
+          <tomeeHttpPort>9090</tomeeHttpPort>
+          <tomeeAjpPort>9009</tomeeAjpPort>
+          <tomeeShutdownPort>9005</tomeeShutdownPort>
           <warFile>${project.build.directory}/${project.artifactId}-${project.version}.war</warFile>
           <libs>
             <lib>org.tomitribe:sheldon-api:${version.dependency.sheldon}</lib>
             <lib>org.tomitribe:tomitribe-crest-api:${version.dependency.crest}</lib>
             <lib>org.tomitribe:firedrill:${version.dependency.firedrill}</lib>
           </libs>
+          <apps>
+            <app>org.tomitribe:sheldon-rar:${version.dependency.sheldon}:rar</app>
+          </apps>
           <systemVariables>
             <openejb.api.javax.ws.rs.Path.validation>false</openejb.api.javax.ws.rs.Path.validation>
             <org.tomitribe.sabot.environment>base</org.tomitribe.sabot.environment>
@@ -153,7 +159,6 @@
       <groupId>org.tomitribe</groupId>
       <artifactId>firedrill</artifactId>
       <version>${version.dependency.firedrill}</version>
-      <scope>provided</scope>
     </dependency>
 
     <dependency>
