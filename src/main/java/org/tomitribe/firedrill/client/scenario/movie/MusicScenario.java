@@ -21,7 +21,7 @@ import org.tomitribe.firedrill.client.TargetResourceBase;
 import org.tomitribe.firedrill.client.auth.AuthMethod;
 import org.tomitribe.firedrill.client.auth.signature.SignatureMethod;
 import org.tomitribe.firedrill.client.scenario.Endpoint;
-import org.tomitribe.firedrill.client.scenario.EndpointScenario;
+import org.tomitribe.firedrill.client.scenario.ScenarioEndpoint;
 import org.tomitribe.firedrill.util.WeightedRandomResult;
 
 import javax.annotation.PostConstruct;
@@ -41,7 +41,7 @@ import static org.tomitribe.firedrill.client.provider.ClientUtils.getRandomInt;
 @ApplicationScoped
 public class MusicScenario extends TargetResourceBase{
     @Inject
-    private EndpointScenario endpointScenario;
+    private ScenarioEndpoint scenarioEndpoint;
     @Inject
     private SignatureMethod signatureMethod;
 
@@ -50,12 +50,12 @@ public class MusicScenario extends TargetResourceBase{
     @PostConstruct
     private void init() {
         final List<Endpoint> allEndpoints = new ArrayList<>();
-        allEndpoints.add(Endpoint.of("/music/rest/musics", "GET"));
-        allEndpoints.add(Endpoint.of("/music/rest/musics/count", "GET"));
-        allEndpoints.add(Endpoint.of("/music/rest/musics", "POST", this::generatePostData));
-        allEndpoints.add(Endpoint.of("/music/rest/musics/1", "DELETE"));
-        //allEndpoints.add(Endpoint.of("music/rest/musics/1", "PUT"));
-        allEndpoints.add(Endpoint.of("/music/rest/musics/1", "GET"));
+        allEndpoints.add(Endpoint.endpoint("/music/rest/musics", "GET"));
+        allEndpoints.add(Endpoint.endpoint("/music/rest/musics/count", "GET"));
+        allEndpoints.add(Endpoint.endpoint("/music/rest/musics", "POST", this::generatePostData));
+        allEndpoints.add(Endpoint.endpoint("/music/rest/musics/1", "DELETE"));
+        //allEndpoints.add(Endpoint.endpoint("music/rest/musics/1", "PUT"));
+        allEndpoints.add(Endpoint.endpoint("/music/rest/musics/1", "GET"));
 
         // GET endpoints are called more.
         final ArrayList<Endpoint> getEndpoints =
@@ -77,24 +77,24 @@ public class MusicScenario extends TargetResourceBase{
 
     @Override
     public AuthMethod getAuthMethod() {
-        endpointScenario.setEndpoint(endpointsToExecute.get());
+        scenarioEndpoint.setEndpoint(endpointsToExecute.get());
         return signatureMethod;
     }
 
     @Override
     public WebTarget createWebTarget(final WebTarget webTarget) {
-        return webTarget.path(endpointScenario.getEndpoint().getPath());
+        return webTarget.path(scenarioEndpoint.getEndpoint().getPath());
     }
 
     @Override
     public String getMethod() {
-        return endpointScenario.getEndpoint().getMethod();
+        return scenarioEndpoint.getEndpoint().getMethod();
     }
 
     @Override
     public Response executeRequest(final WebTarget target) {
 
-        return target.request().method(getMethod(), endpointScenario.getEndpoint().getEntity());
+        return target.request().method(getMethod(), scenarioEndpoint.getEndpoint().getEntity());
     }
 
     private Object generatePostData() {

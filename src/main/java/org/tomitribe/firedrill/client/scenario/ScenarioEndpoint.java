@@ -22,7 +22,7 @@ import javax.enterprise.context.RequestScoped;
  * @author Roberto Cortez
  */
 @RequestScoped
-public class EndpointScenario {
+public class ScenarioEndpoint {
     private Endpoint endpoint;
 
     public Endpoint getEndpoint() {

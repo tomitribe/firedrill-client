@@ -20,7 +20,7 @@ import org.tomitribe.firedrill.client.TargetResourceBase;
 import org.tomitribe.firedrill.client.auth.AuthMethod;
 import org.tomitribe.firedrill.client.auth.oauth.OAuthMethod;
 import org.tomitribe.firedrill.client.scenario.Endpoint;
-import org.tomitribe.firedrill.client.scenario.EndpointScenario;
+import org.tomitribe.firedrill.client.scenario.ScenarioEndpoint;
 import org.tomitribe.firedrill.util.WeightedRandomResult;
 
 import javax.annotation.PostConstruct;
@@ -39,7 +39,7 @@ import static java.util.Collections.shuffle;
 @ApplicationScoped
 public class TwitterScenario extends TargetResourceBase {
     @Inject
-    private EndpointScenario endpointScenario;
+    private ScenarioEndpoint scenarioEndpoint;
     @Inject
     private OAuthMethod oAuthMethod;
 
@@ -48,37 +48,37 @@ public class TwitterScenario extends TargetResourceBase {
     @PostConstruct
     private void init() {
         final List<Endpoint> allEndpoints = Arrays.asList(
-                Endpoint.of("twitter/api/account/settings", "GET"),
-                Endpoint.of("twitter/api/account/update_profile_banner", "POST"),
-                Endpoint.of("twitter/api/account/update_profile_image", "POST"),
-                Endpoint.of("twitter/api/application/rate_limit_status", "GET"),
-                Endpoint.of("twitter/api/blocks/ids", "GET"),
-                Endpoint.of("twitter/api/blocks/list", "GET"),
-                Endpoint.of("twitter/api/direct_messages/show", "GET"),
-                Endpoint.of("twitter/api/favorites/destroy", "POST"),
-                Endpoint.of("twitter/api/followers/list", "GET"),
-                Endpoint.of("twitter/api/friends/ids", "GET"),
-                Endpoint.of("twitter/api/friendships/no_retweets/ids", "GET"),
-                Endpoint.of("twitter/api/geo/place", "POST"),
-                Endpoint.of("twitter/api/geo/similar_places", "GET"),
-                Endpoint.of("twitter/api/help/configuration", "GET"),
-                Endpoint.of("twitter/api/lists/list", "GET"),
-                Endpoint.of("twitter/api/lists/members", "GET"),
-                Endpoint.of("twitter/api/lists/members/destroy_all", "POST"),
-                Endpoint.of("twitter/api/lists/members/show", "GET"),
-                Endpoint.of("twitter/api/saved_searches/list", "GET"),
-                Endpoint.of("twitter/api/statuses/firehose", "GET"),
-                Endpoint.of("twitter/api/statuses/home_timeline", "GET"),
-                Endpoint.of("twitter/api/statuses/mentions_timeline", "GET"),
-                Endpoint.of("twitter/api/statuses/retweeters/ids", "GET"),
-                Endpoint.of("twitter/api/statuses/retweets/{id}", "GET"),
-                Endpoint.of("twitter/api/statuses/sample", "GET"),
-                Endpoint.of("twitter/api/statuses/show/{id}", "GET"),
-                Endpoint.of("twitter/api/statuses/update_with_media", "POST"),
-                Endpoint.of("twitter/api/users/contributees", "GET"),
-                Endpoint.of("twitter/api/users/search", "GET"),
-                Endpoint.of("twitter/api/users/suggestions/{slug}/members", "GET"),
-                Endpoint.of("twitter/api/users/report_spam", "POST"));
+                Endpoint.endpoint("twitter/api/account/settings", "GET"),
+                Endpoint.endpoint("twitter/api/account/update_profile_banner", "POST"),
+                Endpoint.endpoint("twitter/api/account/update_profile_image", "POST"),
+                Endpoint.endpoint("twitter/api/application/rate_limit_status", "GET"),
+                Endpoint.endpoint("twitter/api/blocks/ids", "GET"),
+                Endpoint.endpoint("twitter/api/blocks/list", "GET"),
+                Endpoint.endpoint("twitter/api/direct_messages/show", "GET"),
+                Endpoint.endpoint("twitter/api/favorites/destroy", "POST"),
+                Endpoint.endpoint("twitter/api/followers/list", "GET"),
+                Endpoint.endpoint("twitter/api/friends/ids", "GET"),
+                Endpoint.endpoint("twitter/api/friendships/no_retweets/ids", "GET"),
+                Endpoint.endpoint("twitter/api/geo/place", "POST"),
+                Endpoint.endpoint("twitter/api/geo/similar_places", "GET"),
+                Endpoint.endpoint("twitter/api/help/configuration", "GET"),
+                Endpoint.endpoint("twitter/api/lists/list", "GET"),
+                Endpoint.endpoint("twitter/api/lists/members", "GET"),
+                Endpoint.endpoint("twitter/api/lists/members/destroy_all", "POST"),
+                Endpoint.endpoint("twitter/api/lists/members/show", "GET"),
+                Endpoint.endpoint("twitter/api/saved_searches/list", "GET"),
+                Endpoint.endpoint("twitter/api/statuses/firehose", "GET"),
+                Endpoint.endpoint("twitter/api/statuses/home_timeline", "GET"),
+                Endpoint.endpoint("twitter/api/statuses/mentions_timeline", "GET"),
+                Endpoint.endpoint("twitter/api/statuses/retweeters/ids", "GET"),
+                Endpoint.endpoint("twitter/api/statuses/retweets/{id}", "GET"),
+                Endpoint.endpoint("twitter/api/statuses/sample", "GET"),
+                Endpoint.endpoint("twitter/api/statuses/show/{id}", "GET"),
+                Endpoint.endpoint("twitter/api/statuses/update_with_media", "POST"),
+                Endpoint.endpoint("twitter/api/users/contributees", "GET"),
+                Endpoint.endpoint("twitter/api/users/search", "GET"),
+                Endpoint.endpoint("twitter/api/users/suggestions/{slug}/members", "GET"),
+                Endpoint.endpoint("twitter/api/users/report_spam", "POST"));
 
         final ArrayList<Endpoint> endpoints = new ArrayList<>();
         endpoints.addAll(allEndpoints.stream()
@@ -98,13 +98,13 @@ public class TwitterScenario extends TargetResourceBase {
 
     @Override
     public WebTarget createWebTarget(final WebTarget webTarget) {
-        endpointScenario.setEndpoint(endpointsToExecute.get());
-        return webTarget.path(endpointScenario.getEndpoint().getPath());
+        scenarioEndpoint.setEndpoint(endpointsToExecute.get());
+        return webTarget.path(scenarioEndpoint.getEndpoint().getPath());
     }
 
     @Override
     public String getMethod() {
-        return endpointScenario.getEndpoint().getMethod();
+        return scenarioEndpoint.getEndpoint().getMethod();
     }
 
     private void addRandom(final List<Endpoint> endpoints, final Endpoint endpoint) {

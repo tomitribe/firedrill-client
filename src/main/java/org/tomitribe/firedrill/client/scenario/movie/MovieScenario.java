@@ -21,7 +21,7 @@ import org.tomitribe.firedrill.client.TargetResourceBase;
 import org.tomitribe.firedrill.client.auth.AuthMethod;
 import org.tomitribe.firedrill.client.auth.oauth.OAuthMethod;
 import org.tomitribe.firedrill.client.scenario.Endpoint;
-import org.tomitribe.firedrill.client.scenario.EndpointScenario;
+import org.tomitribe.firedrill.client.scenario.ScenarioEndpoint;
 import org.tomitribe.firedrill.util.WeightedRandomResult;
 
 import javax.annotation.PostConstruct;
@@ -41,7 +41,7 @@ import static org.tomitribe.firedrill.client.provider.ClientUtils.getRandomInt;
 @ApplicationScoped
 public class MovieScenario extends TargetResourceBase {
     @Inject
-    private EndpointScenario endpointScenario;
+    private ScenarioEndpoint scenarioEndpoint;
     @Inject
     private OAuthMethod oAuthMethod;
 
@@ -50,12 +50,12 @@ public class MovieScenario extends TargetResourceBase {
     @PostConstruct
     private void init() {
         final List<Endpoint> allEndpoints = new ArrayList<>();
-        allEndpoints.add(Endpoint.of("movie/rest/movies", "GET"));
-        allEndpoints.add(Endpoint.of("movie/rest/movies/count", "GET"));
-        allEndpoints.add(Endpoint.of("movie/rest/movies", "POST", this::generatePostData));
-        allEndpoints.add(Endpoint.of("movie/rest/movies/1", "DELETE"));
-        //allEndpoints.add(Endpoint.of("movie/rest/movies/1", "PUT"));
-        allEndpoints.add(Endpoint.of("movie/rest/movies/1", "GET"));
+        allEndpoints.add(Endpoint.endpoint("movie/rest/movies", "GET"));
+        allEndpoints.add(Endpoint.endpoint("movie/rest/movies/count", "GET"));
+        allEndpoints.add(Endpoint.endpoint("movie/rest/movies", "POST", this::generatePostData));
+        allEndpoints.add(Endpoint.endpoint("movie/rest/movies/1", "DELETE"));
+        //allEndpoints.add(Endpoint.endpoint("movie/rest/movies/1", "PUT"));
+        allEndpoints.add(Endpoint.endpoint("movie/rest/movies/1", "GET"));
 
         // GET endpoints are called more.
         final ArrayList<Endpoint> getEndpoints =
@@ -82,18 +82,18 @@ public class MovieScenario extends TargetResourceBase {
 
     @Override
     public WebTarget createWebTarget(final WebTarget webTarget) {
-        endpointScenario.setEndpoint(endpointsToExecute.get());
-        return webTarget.path(endpointScenario.getEndpoint().getPath());
+        scenarioEndpoint.setEndpoint(endpointsToExecute.get());
+        return webTarget.path(scenarioEndpoint.getEndpoint().getPath());
     }
 
     @Override
     public String getMethod() {
-        return endpointScenario.getEndpoint().getMethod();
+        return scenarioEndpoint.getEndpoint().getMethod();
     }
 
     @Override
     public Response executeRequest(final WebTarget target) {
-        return target.request().method(getMethod(), endpointScenario.getEndpoint().getEntity());
+        return target.request().method(getMethod(), scenarioEndpoint.getEndpoint().getEntity());
     }
 
     private Object generatePostData() {

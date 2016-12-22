@@ -19,7 +19,7 @@ package org.tomitribe.firedrill.client.auth.signature;
 import org.tomitribe.auth.signatures.Signature;
 import org.tomitribe.auth.signatures.Signer;
 import org.tomitribe.firedrill.client.auth.AuthMethod;
-import org.tomitribe.firedrill.client.scenario.EndpointScenario;
+import org.tomitribe.firedrill.client.scenario.ScenarioEndpoint;
 import org.tomitribe.sabot.Config;
 
 import javax.crypto.SecretKey;
@@ -51,7 +51,7 @@ public class SignatureMethod implements AuthMethod {
     private String alias;
 
     @Inject
-    private EndpointScenario endpointScenario;
+    private ScenarioEndpoint scenarioEndpoint;
 
     @Override
     public void preExecute(final Client client) throws Exception {
@@ -71,8 +71,8 @@ public class SignatureMethod implements AuthMethod {
         headers.put(HttpHeaders.DATE, date);
         headers.put("Digest", digest);
 
-        final Signature sign = new Signer(secretKey, signature).sign(endpointScenario.getEndpoint().getMethod(),
-                                                                     endpointScenario.getEndpoint().getPath(),
+        final Signature sign = new Signer(secretKey, signature).sign(scenarioEndpoint.getEndpoint().getMethod(),
+                                                                     scenarioEndpoint.getEndpoint().getPath(),
                                                                      headers);
 
         client.register(new SignatureAuthFilter(sign, date, digest));

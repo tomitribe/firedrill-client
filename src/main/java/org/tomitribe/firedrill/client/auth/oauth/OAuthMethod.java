@@ -32,6 +32,7 @@ import javax.ws.rs.core.Response;
 
 import static org.tomitribe.firedrill.client.provider.ClientUtils.getRandomInt;
 
+@Deprecated
 @ApplicationScoped
 public class OAuthMethod implements AuthMethod {
     @Inject

@@ -16,25 +16,18 @@
  */
 package org.tomitribe.firedrill.client.auth.oauth;
 
-import org.tomitribe.firedrill.client.provider.OAuthToken;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-import javax.ws.rs.client.ClientRequestContext;
-import javax.ws.rs.client.ClientRequestFilter;
-import javax.ws.rs.core.MultivaluedMap;
-import java.io.IOException;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
-
-@Deprecated
-public class HTTPBearerAuthFilter implements ClientRequestFilter {
-    public final OAuthToken oauthToken;
-
-    public HTTPBearerAuthFilter(OAuthToken oauthToken) {
-        this.oauthToken = oauthToken;
-    }
-
-    public void filter(ClientRequestContext requestContext) throws IOException {
-        MultivaluedMap<String, Object> headers = requestContext.getHeaders();
-        headers.add(AUTHORIZATION, "Bearer " + oauthToken.accessToken);
-    }
+/**
+ * @author Roberto Cortez
+ */
+@Target({ TYPE, METHOD, FIELD })
+@Retention(RUNTIME)
+public @interface OAuth {
 }

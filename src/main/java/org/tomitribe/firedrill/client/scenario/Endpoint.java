@@ -56,11 +56,11 @@ public class Endpoint {
         return entity(supplier.get(), APPLICATION_JSON_TYPE);
     }
 
-    public static Endpoint of(final String endpoint, final String method) {
+    public static Endpoint endpoint(final String endpoint, final String method) {
         return new Endpoint(endpoint, method, () -> "");
     }
 
-    public static Endpoint of(final String endpoint, final String method, final Supplier supplier) {
+    public static Endpoint endpoint(final String endpoint, final String method, final Supplier supplier) {
         return new Endpoint(endpoint, method, supplier);
     }
 }
