@@ -20,12 +20,10 @@ import org.tomitribe.firedrill.client.auth.AuthMethod;
 import org.tomitribe.sabot.Config;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import java.util.Calendar;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
 import static org.tomitribe.firedrill.client.provider.ClientUtils.createClient;
@@ -34,9 +32,6 @@ import static org.tomitribe.firedrill.client.provider.ClientUtils.getRandomInt;
 public abstract class TargetResourceBase implements Runnable {
     private static Logger logger = Logger.getLogger(TargetResourceBase.class.getName());
 
-    @Inject
-    @Named("runningAtomic")
-    private AtomicBoolean running;
     @Inject
     @Config("TargetResourceBase.targetUrl")
     private String targetUrl;
@@ -48,12 +43,8 @@ public abstract class TargetResourceBase implements Runnable {
         while (true) {
             Response response = null;
             try {
-                if (running.get()) {
-                    sleep();
-                    response = post();
-                } else {
-                    Thread.sleep(1000L);
-                }
+                sleep();
+                response = post();
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {

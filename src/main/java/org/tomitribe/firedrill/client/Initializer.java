@@ -16,6 +16,10 @@
  */
 package org.tomitribe.firedrill.client;
 
+import org.tomitribe.firedrill.client.scenario.movie.MovieScenario;
+import org.tomitribe.firedrill.client.scenario.movie.MusicScenario;
+import org.tomitribe.firedrill.client.scenario.twitter.TwitterScenario;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Lock;
@@ -29,14 +33,22 @@ import javax.inject.Inject;
 @Startup
 @Lock(LockType.READ)
 public class Initializer {
-    @Inject
-    private Controller controller;
     @Resource
     private ManagedExecutorService mes;
 
+    @Inject
+    private MovieScenario movieScenario;
+    @Inject
+    private MusicScenario musicScenario;
+    @Inject
+    private TwitterScenario twitterScenario;
+
     @PostConstruct
     void postConstruct() {
-        System.out.println("postConstruct() - Initializing Application");
-        mes.execute(controller);
+        mes.execute(musicScenario);
+        mes.execute(movieScenario);
+        mes.execute(twitterScenario);
+        mes.execute(twitterScenario);
+        mes.execute(twitterScenario);
     }
 }
