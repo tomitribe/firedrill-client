@@ -17,6 +17,8 @@
 package org.tomitribe.firedrill.client.scenario.twitter;
 
 import org.tomitribe.firedrill.client.TargetResourceBase;
+import org.tomitribe.firedrill.client.auth.AuthMethod;
+import org.tomitribe.firedrill.client.auth.oauth.OAuthMethod;
 import org.tomitribe.firedrill.client.scenario.Endpoint;
 import org.tomitribe.firedrill.client.scenario.EndpointScenario;
 import org.tomitribe.firedrill.util.WeightedRandomResult;
@@ -38,6 +40,8 @@ import static java.util.Collections.shuffle;
 public class TwitterScenario extends TargetResourceBase {
     @Inject
     private EndpointScenario endpointScenario;
+    @Inject
+    private OAuthMethod oAuthMethod;
 
     private WeightedRandomResult<Endpoint> endpointsToExecute;
 
@@ -85,6 +89,11 @@ public class TwitterScenario extends TargetResourceBase {
         shuffle(endpoints);
         endpoints.stream().map(Endpoint::getPath).forEach(System.out::println);
         endpointsToExecute = new WeightedRandomResult<>(endpoints);
+    }
+
+    @Override
+    public AuthMethod getAuthMethod() {
+        return oAuthMethod;
     }
 
     @Override

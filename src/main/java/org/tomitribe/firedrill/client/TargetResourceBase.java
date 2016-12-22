@@ -19,17 +19,12 @@ package org.tomitribe.firedrill.client;
 import org.tomitribe.firedrill.client.auth.AuthMethod;
 import org.tomitribe.sabot.Config;
 
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import java.util.Calendar;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
@@ -45,21 +40,11 @@ public abstract class TargetResourceBase implements Runnable {
     @Inject
     @Config("TargetResourceBase.targetUrl")
     private String targetUrl;
-    @Any
-    @Inject
-    private Instance<AuthMethod> authMethodInstances;
-    private AuthMethod[] authMethods;
-    private int counter = 0;
+
+    private AuthMethod authMethod;
 
     @Override
     public void run() {
-        Iterator<AuthMethod> amitr = authMethodInstances.iterator();
-        List<AuthMethod> authMethodsList = new LinkedList<>();
-        while (amitr.hasNext()) {
-            AuthMethod authMethod = amitr.next();
-            authMethodsList.add(authMethod);
-        }
-        authMethods = authMethodsList.toArray(new AuthMethod[authMethodsList.size()]);
         while (true) {
             Response response = null;
             try {
@@ -79,7 +64,7 @@ public abstract class TargetResourceBase implements Runnable {
 
     private Response post() throws Exception {
         Client client = createClient();
-        AuthMethod authMethod = selectNextAuthMethod();
+        final AuthMethod authMethod = getAuthMethod();
         authMethod.preExecute(client);
         final WebTarget target = createWebTarget(client.target(targetUrl));
         final Response response = executeRequest(target);
@@ -88,14 +73,7 @@ public abstract class TargetResourceBase implements Runnable {
         return response;
     }
 
-    private AuthMethod selectNextAuthMethod() {
-        if (counter >= authMethods.length) {
-            counter = 0;
-        }
-        AuthMethod authMethod = authMethods[counter];
-        counter++;
-        return authMethod;
-    }
+    public abstract AuthMethod getAuthMethod();
 
     public abstract WebTarget createWebTarget(final WebTarget webTarget);
 

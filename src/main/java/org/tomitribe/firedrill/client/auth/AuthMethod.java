@@ -21,7 +21,7 @@ import javax.ws.rs.core.Response;
 
 public interface AuthMethod {
 
-    void preExecute(Client client) throws Exception;
+    default void preExecute(Client client) throws Exception {}
 
-    void postExecute(Client client, Response response) throws Exception;
+    default void postExecute(Client client, Response response) throws Exception {}
 }

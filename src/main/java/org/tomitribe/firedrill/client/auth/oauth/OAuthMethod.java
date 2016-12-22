@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tomitribe.firedrill.client.auth;
+package org.tomitribe.firedrill.client.auth.oauth;
 
-import org.tomitribe.firedrill.client.auth.filter.HTTPBearerAuthFilter;
+import org.tomitribe.firedrill.client.auth.AuthMethod;
 import org.tomitribe.firedrill.client.provider.OAuthToken;
 import org.tomitribe.firedrill.client.provider.OAuthTokenClient;
 import org.tomitribe.firedrill.client.provider.OAuthTokenTokenRepository;
@@ -33,7 +33,7 @@ import javax.ws.rs.core.Response;
 import static org.tomitribe.firedrill.client.provider.ClientUtils.getRandomInt;
 
 @ApplicationScoped
-public class OAuth implements AuthMethod {
+public class OAuthMethod implements AuthMethod {
     @Inject
     @Config("OAuth.password")
     private String password;

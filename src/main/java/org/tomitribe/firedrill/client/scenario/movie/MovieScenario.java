@@ -18,6 +18,8 @@ package org.tomitribe.firedrill.client.scenario.movie;
 
 import fabricator.Fabricator;
 import org.tomitribe.firedrill.client.TargetResourceBase;
+import org.tomitribe.firedrill.client.auth.AuthMethod;
+import org.tomitribe.firedrill.client.auth.oauth.OAuthMethod;
 import org.tomitribe.firedrill.client.scenario.Endpoint;
 import org.tomitribe.firedrill.client.scenario.EndpointScenario;
 import org.tomitribe.firedrill.util.WeightedRandomResult;
@@ -40,6 +42,8 @@ import static org.tomitribe.firedrill.client.provider.ClientUtils.getRandomInt;
 public class MovieScenario extends TargetResourceBase {
     @Inject
     private EndpointScenario endpointScenario;
+    @Inject
+    private OAuthMethod oAuthMethod;
 
     private WeightedRandomResult<Endpoint> endpointsToExecute;
 
@@ -69,6 +73,11 @@ public class MovieScenario extends TargetResourceBase {
         getEndpoints.stream().map(Endpoint::getPath).forEach(System.out::println);
 
         endpointsToExecute = new WeightedRandomResult<>(getEndpoints);
+    }
+
+    @Override
+    public AuthMethod getAuthMethod() {
+        return oAuthMethod;
     }
 
     @Override

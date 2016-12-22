@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tomitribe.firedrill.client.auth.filter;
+package org.tomitribe.firedrill.client.auth.oauth;
 
 import org.tomitribe.firedrill.client.provider.OAuthToken;
 
