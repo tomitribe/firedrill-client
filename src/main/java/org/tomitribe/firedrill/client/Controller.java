@@ -17,6 +17,7 @@
 package org.tomitribe.firedrill.client;
 
 import org.tomitribe.firedrill.client.scenario.movie.MovieScenario;
+import org.tomitribe.firedrill.client.scenario.movie.MusicScenario;
 import org.tomitribe.firedrill.client.scenario.twitter.TwitterScenario;
 
 import javax.annotation.Resource;
@@ -35,6 +36,8 @@ public class Controller implements Runnable {
     @Inject
     private MovieScenario movieScenario;
     @Inject
+    private MusicScenario musicScenario;
+    @Inject
     private TwitterScenario twitterScenario;
 
     @Produces
@@ -43,8 +46,8 @@ public class Controller implements Runnable {
 
     @Override
     public void run() {
+        mes.execute(musicScenario);
         mes.execute(movieScenario);
-        mes.execute(twitterScenario);
         mes.execute(twitterScenario);
         mes.execute(twitterScenario);
         mes.execute(twitterScenario);
