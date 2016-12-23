@@ -19,6 +19,7 @@ package org.tomitribe.firedrill.client.auth.signature;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.tomitribe.auth.signatures.Signer;
+import org.tomitribe.firedrill.client.auth.oauth.OAuthFilter;
 import org.tomitribe.firedrill.util.WeightedRandomResult;
 
 import javax.annotation.PostConstruct;
@@ -32,12 +33,14 @@ import javax.ws.rs.core.MultivaluedMap;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 import java.util.stream.Stream;
 
 import static java.util.Base64.getEncoder;
@@ -62,8 +65,22 @@ public class SignatureFilter implements ClientRequestFilter {
                                               Alias.alias("sheila:sheila1", "marshall"))
                                           .collect(collectingAndThen(toList(), Collections::unmodifiableList));
 
-        //Collections.shuffle(aliases);
-        this.aliases = new WeightedRandomResult<>(aliases);
+        final List<Alias> distributedAliases = new ArrayList<>();
+        aliases.forEach(alias -> {
+            final Random random = new Random();
+            for (int i = 0; i < (random.nextInt(10) + 1) * 2; i++) {
+                if (random.nextInt(100) < 75) {
+                    distributedAliases.add(alias);
+                } else {
+                    distributedAliases.add(random.nextBoolean() ?
+                                         Alias.alias(alias.getKeyId(), "wrong") :
+                                         Alias.alias(alias.getKeyId() + "1", alias.getSecret()));
+                }
+            }
+        });
+
+        Collections.shuffle(distributedAliases);
+        this.aliases = new WeightedRandomResult<>(distributedAliases);
     }
 
     @Override
@@ -89,8 +106,14 @@ public class SignatureFilter implements ClientRequestFilter {
 
         MultivaluedMap<String, Object> headers = requestContext.getHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, sign.toString());
-        headers.add(HttpHeaders.DATE, date);
-        headers.add("Digest", digest);
+
+        if (Math.random() * 100 < 95) {
+            headers.add(HttpHeaders.DATE, date);
+        }
+
+        if (Math.random() * 100 < 95) {
+            headers.add("Digest", digest);
+        }
     }
 
     private String getDigest() {
