@@ -16,10 +16,8 @@
  */
 package org.tomitribe.firedrill.client;
 
-import org.tomitribe.firedrill.client.scenario.movie.MovieScenario;
-import org.tomitribe.firedrill.client.scenario.movie.MusicScenario;
 import org.tomitribe.firedrill.client.scenario.movie.NewMovieScenario;
-import org.tomitribe.firedrill.client.scenario.twitter.TwitterScenario;
+import org.tomitribe.firedrill.client.scenario.twitter.NewTwitterScenario;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -38,24 +36,13 @@ public class Initializer {
     private ManagedExecutorService mes;
 
     @Inject
-    private MovieScenario movieScenario;
-    @Inject
-    private MusicScenario musicScenario;
-    @Inject
-    private TwitterScenario twitterScenario;
-
-    @Inject
     private NewMovieScenario newMovieScenario;
+    @Inject
+    private NewTwitterScenario newTwitterScenario;
 
     @PostConstruct
     void postConstruct() {
-        /*
-        mes.execute(musicScenario);
-        mes.execute(movieScenario);
-        mes.execute(twitterScenario);
-        mes.execute(twitterScenario);
-        mes.execute(twitterScenario);
-        */
         mes.execute(newMovieScenario);
+        mes.execute(newTwitterScenario);
     }
 }

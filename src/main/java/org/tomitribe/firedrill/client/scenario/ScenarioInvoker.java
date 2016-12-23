@@ -60,11 +60,15 @@ public abstract class ScenarioInvoker implements Runnable {
     @Override
     public void run() {
         while (execute) {
-            final Endpoint endpoint = endpointsToExecute.get();
-            final WebTarget webTarget = client.target(targetUrl).path(endpoint.getPath());
-            final Response response = webTarget.request().method(endpoint.getMethod());
-            logger.info(String.format("%s - %s - %d", endpoint.getMethod(), webTarget.getUri(), response.getStatus()));
-            sleep();
+            try {
+                final Endpoint endpoint = endpointsToExecute.get();
+                final WebTarget webTarget = client.target(targetUrl).path(endpoint.getPath());
+                final Response response = webTarget.request().method(endpoint.getMethod());
+                logger.info(String.format("%s - %s - %d", endpoint.getMethod(), webTarget.getUri(), response.getStatus()));
+                sleep();
+            } catch (final Exception e) {
+                // Continue
+            }
         }
     }
 

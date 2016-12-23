@@ -19,6 +19,7 @@ package org.tomitribe.firedrill.client.auth;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
 
+@Deprecated
 public interface AuthMethod {
 
     default void preExecute(Client client) throws Exception {}
