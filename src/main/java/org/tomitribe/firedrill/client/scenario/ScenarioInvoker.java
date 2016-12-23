@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
+import static java.lang.String.format;
+
 /**
  * @author Roberto Cortez
  */
@@ -63,8 +65,8 @@ public abstract class ScenarioInvoker implements Runnable {
             try {
                 final Endpoint endpoint = endpointsToExecute.get();
                 final WebTarget webTarget = client.target(targetUrl).path(endpoint.getPath());
-                final Response response = webTarget.request().method(endpoint.getMethod());
-                logger.info(String.format("%s - %s - %d", endpoint.getMethod(), webTarget.getUri(), response.getStatus()));
+                final Response response = webTarget.request().method(endpoint.getMethod(), endpoint.getEntity());
+                logger.info(format("%s - %s - %d", endpoint.getMethod(), webTarget.getUri(), response.getStatus()));
                 sleep();
             } catch (final Exception e) {
                 // Continue

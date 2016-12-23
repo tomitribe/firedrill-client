@@ -60,6 +60,7 @@ public class MovieScenario extends ScenarioInvoker {
                                   list.add(endpoint);
                               }, ArrayList::addAll);
 
+        endpoints.addAll(getEndpoints());
         shuffle(endpoints);
         return new WeightedRandomResult<>(endpoints);
     }
