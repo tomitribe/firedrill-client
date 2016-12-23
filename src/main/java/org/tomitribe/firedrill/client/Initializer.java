@@ -16,6 +16,7 @@
  */
 package org.tomitribe.firedrill.client;
 
+import org.tomitribe.firedrill.client.scenario.movie.BookScenario;
 import org.tomitribe.firedrill.client.scenario.movie.MovieScenario;
 import org.tomitribe.firedrill.client.scenario.movie.MusicScenario;
 import org.tomitribe.firedrill.client.scenario.twitter.TwitterScenario;
@@ -41,14 +42,16 @@ public class Initializer {
     @Inject
     private MusicScenario musicScenario;
     @Inject
+    private BookScenario bookScenario;
+    @Inject
     private TwitterScenario twitterScenario;
 
     @PostConstruct
     void postConstruct() {
         mes.execute(movieScenario);
-/*        mes.execute(musicScenario);
+        mes.execute(musicScenario);
+        mes.execute(bookScenario);
         mes.execute(twitterScenario);
         mes.execute(twitterScenario);
-        mes.execute(twitterScenario);*/
     }
 }

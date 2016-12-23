@@ -18,6 +18,7 @@ package org.tomitribe.firedrill.client.auth.oauth;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.tomitribe.firedrill.client.auth.signature.SignatureFilter;
 import org.tomitribe.firedrill.util.WeightedRandomResult;
 import org.tomitribe.sabot.Config;
 
@@ -102,7 +103,13 @@ public class OAuthFilter implements ClientRequestFilter {
         }
 
         Optional.ofNullable(tokenCache.get(user.getUsername()))
-                .ifPresent(token -> headers.add(AUTHORIZATION, "Bearer " + token.access_token));
+                .ifPresent(token -> {
+                    if (isSignatureAuthentication(requestContext)) {
+                        headers.add("Bearer", token.access_token);
+                    } else {
+                        headers.add(AUTHORIZATION, "Bearer " + token.access_token);
+                    }
+                });
     }
 
     private Optional<Token> getToken(final User user) {
@@ -128,6 +135,14 @@ public class OAuthFilter implements ClientRequestFilter {
         return OK.getStatusCode() == response.getStatus() ?
                Optional.of(response.readEntity(Token.class)) :
                Optional.empty();
+    }
+
+    private boolean isSignatureAuthentication(final ClientRequestContext requestContext) {
+        return requestContext.getConfiguration().getInstances()
+                             .stream()
+                             .filter(o -> o instanceof SignatureFilter)
+                             .findAny()
+                             .isPresent();
     }
 
     @Data
