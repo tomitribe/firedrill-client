@@ -34,27 +34,4 @@ public class ClientUtils {
     public static int getRandomInt(int range) {
         return random.nextInt(range);
     }
-
-    public static Client createClient() {
-        try {
-            HostnameVerifier verifier = (hostname, session) -> true;
-            TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
-                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
-
-                public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
-                }
-
-                public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
-                }
-            } };
-
-            SSLContext sslContext = SSLContext.getInstance("SSL");
-            sslContext.init(null, trustAllCerts, new SecureRandom());
-            return ClientBuilder.newBuilder().hostnameVerifier(verifier).sslContext(sslContext).build();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

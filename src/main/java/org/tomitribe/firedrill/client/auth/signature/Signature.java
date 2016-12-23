@@ -14,15 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tomitribe.firedrill.client.auth;
+package org.tomitribe.firedrill.client.auth.signature;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.core.Response;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-@Deprecated
-public interface AuthMethod {
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-    default void preExecute(Client client) throws Exception {}
-
-    default void postExecute(Client client, Response response) throws Exception {}
+/**
+ * @author Roberto Cortez
+ */
+@Target({TYPE, METHOD, FIELD })
+@Retention(RUNTIME)
+public @interface Signature {
 }
