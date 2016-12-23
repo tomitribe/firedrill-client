@@ -16,7 +16,6 @@
  */
 package org.tomitribe.firedrill.client.scenario.movie;
 
-import fabricator.Fabricator;
 import org.tomitribe.firedrill.client.auth.signature.Signature;
 import org.tomitribe.firedrill.client.scenario.Endpoint;
 import org.tomitribe.firedrill.client.scenario.ScenarioInvoker;
@@ -31,7 +30,6 @@ import java.util.stream.Stream;
 import static java.util.Collections.shuffle;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
-import static org.tomitribe.firedrill.client.provider.ClientUtils.getRandomInt;
 import static org.tomitribe.firedrill.client.scenario.Endpoint.endpoint;
 
 /**
@@ -67,16 +65,10 @@ public class MusicScenario extends ScenarioInvoker {
     }
 
     private Object generatePostData() {
-        int chance = getRandomInt(100);
-        if (chance >= 95) {
-            return "";
+        if (Math.random() * 100 < 95) {
+            return Movie.generateMovie();
         } else {
-            final String fullName = Fabricator.contact().fullName(false, false);
-            final String title = Fabricator.words().word();
-            final int year = getRandomInt(30) + 1986;
-            final String genre = Fabricator.words().word();
-            final int rating = getRandomInt(10);
-            return new Movie.MovieWrapper(new Movie(fullName, title, year, genre, rating));
+            return "";
         }
     }
 }

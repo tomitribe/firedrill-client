@@ -16,6 +16,10 @@
  */
 package org.tomitribe.firedrill.client.scenario.movie;
 
+import fabricator.Fabricator;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -24,6 +28,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * @author Roberto Cortez
  */
+@Data
+@AllArgsConstructor
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Movie {
     @XmlElement
@@ -39,97 +45,22 @@ public class Movie {
     @XmlElement
     private int rating;
 
-    public Movie() {
+    public static MovieWrapper generateMovie() {
+        final String fullName = Fabricator.contact().fullName(false, false);
+        final String title = Fabricator.words().word();
+        final int year = (int) (Math.random() * 30) + 1986;
+        final String genre = Fabricator.words().word();
+        final int rating = (int) (Math.random() * 10);
+        return new Movie.MovieWrapper(new Movie(null, fullName, title, year, genre, rating));
     }
 
-    public Movie(final String director, final String title, final int year, final String genre, final int rating) {
-        this.director = director;
-        this.title = title;
-        this.year = year;
-        this.genre = genre;
-        this.rating = rating;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(final Integer id) {
-        this.id = id;
-    }
-
-    public String getDirector() {
-        return director;
-    }
-
-    public void setDirector(final String director) {
-        this.director = director;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(final String title) {
-        this.title = title;
-    }
-
-    public int getYear() {
-        return year;
-    }
-
-    public void setYear(final int year) {
-        this.year = year;
-    }
-
-    public String getGenre() {
-        return genre;
-    }
-
-    public void setGenre(final String genre) {
-        this.genre = genre;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-
-    public void setRating(final int rating) {
-        this.rating = rating;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("Movie{");
-        sb.append("director='").append(director).append('\'');
-        sb.append(", title='").append(title).append('\'');
-        sb.append(", year=").append(year);
-        sb.append(", genre='").append(genre).append('\'');
-        sb.append(", rating=").append(rating);
-        sb.append('}');
-        return sb.toString();
-    }
-
+    @Data
+    @AllArgsConstructor
     @XmlRootElement(name = "movie")
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class MovieWrapper {
         @XmlElement
         private Movie movie;
-
-        public MovieWrapper() {
-        }
-
-        public MovieWrapper(final Movie movie) {
-            this.movie = movie;
-        }
-
-        public Movie getMovie() {
-            return movie;
-        }
-
-        public void setMovie(final Movie movie) {
-            this.movie = movie;
-        }
 
         @Override
         public String toString() {
