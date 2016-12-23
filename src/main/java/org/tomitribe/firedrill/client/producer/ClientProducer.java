@@ -16,7 +16,6 @@
  */
 package org.tomitribe.firedrill.client.producer;
 
-import org.apache.cxf.feature.LoggingFeature;
 import org.tomitribe.firedrill.client.auth.oauth.OAuth;
 import org.tomitribe.firedrill.client.auth.oauth.OAuthFilter;
 
@@ -75,7 +74,7 @@ public class ClientProducer {
             sslContext.init(null, trustAllCerts, new SecureRandom());
 
             return ClientBuilder.newBuilder()
-                                .register(new LoggingFeature())
+                                //.register(new LoggingFeature())
                                 .hostnameVerifier((hostname, session) -> true)
                                 .sslContext(sslContext)
                                 .build();

@@ -16,11 +16,12 @@
  */
 package org.tomitribe.firedrill.client.auth.oauth;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import org.tomitribe.firedrill.util.WeightedRandomResult;
 import org.tomitribe.sabot.Config;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
@@ -31,8 +32,15 @@ import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.Random;
+import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toList;
 import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
 import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED_TYPE;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
@@ -45,10 +53,42 @@ import static javax.ws.rs.core.Response.Status.OK;
 public class OAuthFilter implements ClientRequestFilter {
     @Inject
     private Client client;
-
     @Inject
     @Config("oauth.token.server")
     private String oAuthTokenServer;
+
+    private WeightedRandomResult<User> users;
+
+    @PostConstruct
+    private void init() {
+        final List<User> users = Stream.of(User.user("eric", "trey"),
+                                           User.user("kenny", "matt"),
+                                           User.user("kyle", "matt"),
+                                           User.user("stan", "trey"),
+                                           User.user("bebe", "jennifer"),
+                                           User.user("sharon", "april"),
+                                           User.user("sheila", "mona"))
+                                       .collect(collectingAndThen(toList(), Collections::unmodifiableList));
+
+        final List<User> distributeUsers = new ArrayList<>();
+        users.forEach(user -> {
+            final Random random = new Random();
+            for (int i = 0; i < (random.nextInt(10) + 1) * 2; i++) {
+                if (random.nextInt(100) < 75) {
+                    distributeUsers.add(user);
+                } else {
+                    distributeUsers.add(random.nextBoolean() ?
+                                        User.user(user.getUsername(), "wrong") :
+                                        User.user(user.getUsername() + "1", user.getPassword()));
+                }
+            }
+        });
+
+        Collections.shuffle(distributeUsers);
+        distributeUsers.forEach(System.out::println);
+
+        this.users = new WeightedRandomResult<>(distributeUsers);
+    }
 
     @Override
     public void filter(final ClientRequestContext requestContext) throws IOException {
@@ -58,14 +98,16 @@ public class OAuthFilter implements ClientRequestFilter {
     }
 
     private Optional<Token> getToken() {
+        final User user = users.get();
+
         final Form form = new Form();
-        form.param("username", "eric");
-        form.param("password", "trey");
+        form.param("username", user.getUsername());
+        form.param("password", user.getPassword());
         form.param("grant_type", "password");
 
         final Response response = client.target(oAuthTokenServer)
-                                    .request(APPLICATION_JSON_TYPE)
-                                    .post(Entity.entity(form, APPLICATION_FORM_URLENCODED_TYPE));
+                                        .request(APPLICATION_JSON_TYPE)
+                                        .post(Entity.entity(form, APPLICATION_FORM_URLENCODED_TYPE));
 
         return OK.getStatusCode() == response.getStatus() ?
                Optional.of(response.readEntity(Token.class)) :
@@ -77,5 +119,12 @@ public class OAuthFilter implements ClientRequestFilter {
         private String access_token;
         private String refresh_token;
         private String token_type;
+    }
+
+    @Data
+    @AllArgsConstructor(staticName = "user")
+    static class User {
+        private String username;
+        private String password;
     }
 }
