@@ -61,35 +61,13 @@ public class OAuthFilter implements ClientRequestFilter {
     private String oAuthTokenServer;
 
     private static final Map<String, Token> tokenCache = new ConcurrentHashMap<>();
+    private WeightedRandomResult<Secret> secrets;
     private WeightedRandomResult<User> users;
 
     @PostConstruct
     private void init() {
-        final List<User> users = Stream.of(User.user("eric", "trey"),
-                                           User.user("kenny", "matt"),
-                                           User.user("kyle", "matt"),
-                                           User.user("stan", "trey"),
-                                           User.user("bebe", "jennifer"),
-                                           User.user("sharon", "april"),
-                                           User.user("sheila", "mona"))
-                                       .collect(collectingAndThen(toList(), Collections::unmodifiableList));
-
-        final List<User> distributeUsers = new ArrayList<>();
-        users.forEach(user -> {
-            final Random random = new Random();
-            for (int i = 0; i < (random.nextInt(10) + 1) * 2; i++) {
-                if (random.nextInt(100) < 75) {
-                    distributeUsers.add(user);
-                } else {
-                    distributeUsers.add(random.nextBoolean() ?
-                                        User.user(user.getUsername(), "wrong") :
-                                        User.user(user.getUsername() + "1", user.getPassword()));
-                }
-            }
-        });
-
-        Collections.shuffle(distributeUsers);
-        this.users = new WeightedRandomResult<>(distributeUsers);
+        this.secrets = new WeightedRandomResult<>(createSecrets());
+        this.users = new WeightedRandomResult<>(createUsers());
     }
 
     @Override
@@ -113,7 +91,10 @@ public class OAuthFilter implements ClientRequestFilter {
     }
 
     private Optional<Token> getToken(final User user) {
+        final Secret secret = secrets.get();
         final Form form = new Form();
+        form.param("client_id", secret.getClientId());
+        form.param("client_secret", secret.getClientSecret());
         form.param("username", user.getUsername());
         form.param("password", user.getPassword());
         form.param("grant_type", "password");
@@ -121,7 +102,10 @@ public class OAuthFilter implements ClientRequestFilter {
     }
 
     private Optional<Token> getRefreshToken(final Token token) {
+        final Secret secret = secrets.get();
         final Form form = new Form();
+        form.param("client_id", secret.getClientId());
+        form.param("client_secret", secret.getClientSecret());
         form.param("refresh_token", token.refresh_token);
         form.param("grant_type", "refresh_token");
         return postToken(form);
@@ -145,17 +129,77 @@ public class OAuthFilter implements ClientRequestFilter {
                              .isPresent();
     }
 
+    private List<Secret> createSecrets() {
+        final List<Secret> secrets = Stream.of(Secret.secret("imdb", "m0vies"),
+                                               Secret.secret("netflix", "m0vies"),
+                                               Secret.secret("amazon-prime", "m0vies"),
+                                               Secret.secret("cinema", "m0vies"))
+                                           .collect(collectingAndThen(toList(), Collections::unmodifiableList));
+
+        final List<Secret> distributedSecrets = new ArrayList<>();
+        secrets.forEach(secret -> {
+            final Random random = new Random();
+            for (int i = 0; i < (random.nextInt(10) + 1) * 2; i++) {
+                if (random.nextInt(100) < 75) {
+                    distributedSecrets.add(secret);
+                } else {
+                    distributedSecrets.add(random.nextBoolean() ?
+                                        Secret.secret(secret.clientId, "wrong") :
+                                        Secret.secret(secret.clientId + "1", secret.clientSecret));
+                }
+            }
+        });
+
+        Collections.shuffle(distributedSecrets);
+        return distributedSecrets;
+    }
+
+    private List<User> createUsers() {
+        final List<User> users = Stream.of(User.user("eric", "trey"),
+                                           User.user("kenny", "matt"),
+                                           User.user("kyle", "matt"),
+                                           User.user("stan", "trey"),
+                                           User.user("bebe", "jennifer"),
+                                           User.user("sharon", "april"),
+                                           User.user("sheila", "mona"))
+                                       .collect(collectingAndThen(toList(), Collections::unmodifiableList));
+
+        final List<User> distributedUsers = new ArrayList<>();
+        users.forEach(user -> {
+            final Random random = new Random();
+            for (int i = 0; i < (random.nextInt(10) + 1) * 2; i++) {
+                if (random.nextInt(100) < 75) {
+                    distributedUsers.add(user);
+                } else {
+                    distributedUsers.add(random.nextBoolean() ?
+                                        User.user(user.getUsername(), "wrong") :
+                                        User.user(user.getUsername() + "1", user.getPassword()));
+                }
+            }
+        });
+
+        Collections.shuffle(distributedUsers);
+        return distributedUsers;
+    }
+
+    @Data
+    @AllArgsConstructor(staticName = "secret")
+    private static class Secret {
+        private String clientId;
+        private String clientSecret;
+    }
+
+    @Data
+    @AllArgsConstructor(staticName = "user")
+    private static class User {
+        private String username;
+        private String password;
+    }
+
     @Data
     private static class Token {
         private String access_token;
         private String refresh_token;
         private String token_type;
-    }
-
-    @Data
-    @AllArgsConstructor(staticName = "user")
-    static class User {
-        private String username;
-        private String password;
     }
 }
