@@ -35,8 +35,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.collectingAndThen;
@@ -57,6 +59,7 @@ public class OAuthFilter implements ClientRequestFilter {
     @Config("oauth.token.server")
     private String oAuthTokenServer;
 
+    private static final Map<String, Token> tokenCache = new ConcurrentHashMap<>();
     private WeightedRandomResult<User> users;
 
     @PostConstruct
@@ -92,17 +95,32 @@ public class OAuthFilter implements ClientRequestFilter {
     public void filter(final ClientRequestContext requestContext) throws IOException {
         final MultivaluedMap<String, Object> headers = requestContext.getHeaders();
 
-        getToken().ifPresent(token -> headers.add(AUTHORIZATION, "Bearer " + token.access_token));
+        final User user = users.get();
+        tokenCache.computeIfAbsent(user.getUsername(), s -> getToken(user).orElse(null));
+        if (Math.random() * 100 > 90) {
+            tokenCache.computeIfPresent(user.getUsername(), (s, token) -> getRefreshToken(token).orElse(null));
+        }
+
+        Optional.ofNullable(tokenCache.get(user.getUsername()))
+                .ifPresent(token -> headers.add(AUTHORIZATION, "Bearer " + token.access_token));
     }
 
-    private Optional<Token> getToken() {
-        final User user = users.get();
-
+    private Optional<Token> getToken(final User user) {
         final Form form = new Form();
         form.param("username", user.getUsername());
         form.param("password", user.getPassword());
         form.param("grant_type", "password");
+        return postToken(form);
+    }
 
+    private Optional<Token> getRefreshToken(final Token token) {
+        final Form form = new Form();
+        form.param("refresh_token", token.refresh_token);
+        form.param("grant_type", "refresh_token");
+        return postToken(form);
+    }
+
+    private Optional<Token> postToken(final Form form) {
         final Response response = client.target(oAuthTokenServer)
                                         .request(APPLICATION_JSON_TYPE)
                                         .post(Entity.entity(form, APPLICATION_FORM_URLENCODED_TYPE));

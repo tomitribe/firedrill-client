@@ -46,9 +46,9 @@ public class Initializer {
     @PostConstruct
     void postConstruct() {
         mes.execute(movieScenario);
-        mes.execute(musicScenario);
+/*        mes.execute(musicScenario);
         mes.execute(twitterScenario);
         mes.execute(twitterScenario);
-        mes.execute(twitterScenario);
+        mes.execute(twitterScenario);*/
     }
 }
