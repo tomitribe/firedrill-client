@@ -37,7 +37,7 @@ import static org.tomitribe.firedrill.client.scenario.Endpoint.endpoint;
  */
 @ApplicationScoped
 @OAuth
-public class NewTwitterScenario extends ScenarioInvoker {
+public class TwitterScenario extends ScenarioInvoker {
     @Override
     protected List<Endpoint> getEndpoints() {
         return Stream.of(endpoint("twitter/api/account/settings", "GET"),

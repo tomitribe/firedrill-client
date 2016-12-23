@@ -24,7 +24,7 @@ import org.tomitribe.firedrill.util.WeightedRandomResult;
 import javax.annotation.PostConstruct;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.HttpHeaders;
@@ -47,7 +47,7 @@ import static java.util.stream.Collectors.toList;
 /**
  * @author Roberto Cortez
  */
-@RequestScoped
+@ApplicationScoped
 public class SignatureFilter implements ClientRequestFilter {
     private WeightedRandomResult<Alias> aliases;
 
@@ -83,7 +83,6 @@ public class SignatureFilter implements ClientRequestFilter {
         signHeaders.put("Digest", digest);
 
         final String path = requestContext.getUri().getPath();
-        System.out.println("path = " + path);
         final org.tomitribe.auth.signatures.Signature sign =
                 new Signer(secretKey, signature).sign(requestContext.getMethod(),
                                                       path, signHeaders);

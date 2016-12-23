@@ -39,7 +39,7 @@ import static org.tomitribe.firedrill.client.scenario.Endpoint.endpoint;
  */
 @ApplicationScoped
 @Signature
-public class NewMusicScenario extends ScenarioInvoker {
+public class MusicScenario extends ScenarioInvoker {
     @Override
     protected List<Endpoint> getEndpoints() {
         return Stream.of(endpoint("music/rest/musics", "GET"),

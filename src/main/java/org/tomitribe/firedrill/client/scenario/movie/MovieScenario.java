@@ -39,7 +39,7 @@ import static org.tomitribe.firedrill.client.scenario.Endpoint.endpoint;
  */
 @ApplicationScoped
 @OAuth
-public class NewMovieScenario extends ScenarioInvoker {
+public class MovieScenario extends ScenarioInvoker {
     @Override
     protected List<Endpoint> getEndpoints() {
         return Stream.of(endpoint("movie/rest/movies", "GET"),

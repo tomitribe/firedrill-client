@@ -22,7 +22,7 @@ import org.tomitribe.firedrill.util.WeightedRandomResult;
 import org.tomitribe.sabot.Config;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientRequestContext;
@@ -49,7 +49,7 @@ import static javax.ws.rs.core.Response.Status.OK;
 /**
  * @author Roberto Cortez
  */
-@RequestScoped
+@ApplicationScoped
 public class OAuthFilter implements ClientRequestFilter {
     @Inject
     private Client client;
@@ -85,8 +85,6 @@ public class OAuthFilter implements ClientRequestFilter {
         });
 
         Collections.shuffle(distributeUsers);
-        distributeUsers.forEach(System.out::println);
-
         this.users = new WeightedRandomResult<>(distributeUsers);
     }
 

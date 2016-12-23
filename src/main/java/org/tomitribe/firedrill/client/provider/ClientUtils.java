@@ -16,12 +16,6 @@
  */
 package org.tomitribe.firedrill.client.provider;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import java.security.SecureRandom;
 
 public class ClientUtils {
