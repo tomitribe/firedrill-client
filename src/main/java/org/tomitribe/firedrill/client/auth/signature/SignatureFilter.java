@@ -19,7 +19,6 @@ package org.tomitribe.firedrill.client.auth.signature;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.tomitribe.auth.signatures.Signer;
-import org.tomitribe.firedrill.client.auth.oauth.OAuthFilter;
 import org.tomitribe.firedrill.util.WeightedRandomResult;
 
 import javax.annotation.PostConstruct;
