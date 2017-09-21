@@ -29,6 +29,13 @@
   <packaging>war</packaging>
   <name>Tomitribe :: Firedrill Client</name>
 
+  <scm>
+    <connection>scm:git:git@github.com:tomitribe/firedrill-client.git</connection>
+    <url>scm:git:git@github.com:tomitribe/firedrill-client.git</url>
+    <developerConnection>scm:git:git@github.com:tomitribe/firedrill-client.git</developerConnection>
+    <tag>twitter-1.0</tag>
+  </scm>
+
   <repositories>
     <repository>
       <id>sonatype-oss-snapshot</id>
@@ -56,9 +63,9 @@
   </distributionManagement>
 
   <properties>
-    <version.dependency.sheldon>0.9-demo1-SNAPSHOT</version.dependency.sheldon>
-    <version.dependency.crest>0.7</version.dependency.crest>
-    <version.dependency.firedrill>1.0-SNAPSHOT</version.dependency.firedrill>
+    <version.dependency.sheldon>0.8</version.dependency.sheldon>
+    <version.dependency.crest>0.3</version.dependency.crest>
+    <version.dependency.firedrill>1.0</version.dependency.firedrill>
   </properties>
 
   <build>
