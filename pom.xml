@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>firedrill-client</artifactId>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.0</version>
   <packaging>war</packaging>
   <name>Tomitribe :: Firedrill Client</name>
 
@@ -32,7 +32,7 @@
     <connection>scm:git:git@github.com:tomitribe/firedrill-client.git</connection>
     <url>scm:git:git@github.com:tomitribe/firedrill-client.git</url>
     <developerConnection>scm:git:git@github.com:tomitribe/firedrill-client.git</developerConnection>
-    <tag>twitter-1.0</tag>
+    <tag>firedrill-client-1.0</tag>
   </scm>
 
   <repositories>
