@@ -20,7 +20,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.tomitribe.auth.signatures.Signer;
 import org.tomitribe.firedrill.util.WeightedRandomResult;
-import org.tomitribe.util.Base64;
 
 import javax.annotation.PostConstruct;
 import javax.crypto.SecretKey;
