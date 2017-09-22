@@ -93,8 +93,8 @@ public class OAuthFilter implements ClientRequestFilter {
     private Optional<Token> getToken(final User user) {
         final Secret secret = secrets.get();
         final Form form = new Form();
-        form.param("client_id", secret.getClientId());
-        form.param("client_secret", secret.getClientSecret());
+//        form.param("client_id", secret.getClientId());
+//        form.param("client_secret", secret.getClientSecret());
         form.param("username", user.getUsername());
         form.param("password", user.getPassword());
         form.param("grant_type", "password");
@@ -104,8 +104,8 @@ public class OAuthFilter implements ClientRequestFilter {
     private Optional<Token> getRefreshToken(final Token token) {
         final Secret secret = secrets.get();
         final Form form = new Form();
-        form.param("client_id", secret.getClientId());
-        form.param("client_secret", secret.getClientSecret());
+//        form.param("client_id", secret.getClientId());
+//        form.param("client_secret", secret.getClientSecret());
         form.param("refresh_token", token.refresh_token);
         form.param("grant_type", "refresh_token");
         return postToken(form);
@@ -130,10 +130,10 @@ public class OAuthFilter implements ClientRequestFilter {
     }
 
     private List<Secret> createSecrets() {
-        final List<Secret> secrets = Stream.of(Secret.secret("imdb", "m0vies"),
-                                               Secret.secret("netflix", "m0vies"),
-                                               Secret.secret("amazon-prime", "m0vies"),
-                                               Secret.secret("cinema", "m0vies"))
+        final List<Secret> secrets = Stream.of(Secret.secret("imdb", "client_m0vies"),
+                                               Secret.secret("netflix", "client_m0vies"),
+                                               Secret.secret("amazon-prime", "client_m0vies"),
+                                               Secret.secret("cinema", "client_m0vies"))
                                            .collect(collectingAndThen(toList(), Collections::unmodifiableList));
 
         final List<Secret> distributedSecrets = new ArrayList<>();
@@ -155,13 +155,13 @@ public class OAuthFilter implements ClientRequestFilter {
     }
 
     private List<User> createUsers() {
-        final List<User> users = Stream.of(User.user("eric", "trey"),
-                                           User.user("kenny", "matt"),
-                                           User.user("kyle", "matt"),
-                                           User.user("stan", "trey"),
-                                           User.user("bebe", "jennifer"),
-                                           User.user("sharon", "april"),
-                                           User.user("sheila", "mona"))
+        final List<User> users = Stream.of(User.user("eric", "password_trey"),
+                                           User.user("kenny", "password_matt"),
+                                           User.user("kyle", "password_matt"),
+                                           User.user("stan", "password_trey"),
+                                           User.user("bebe", "password_jennifer"),
+                                           User.user("sharon", "password_april"),
+                                           User.user("sheila", "password_mona"))
                                        .collect(collectingAndThen(toList(), Collections::unmodifiableList));
 
         final List<User> distributedUsers = new ArrayList<>();

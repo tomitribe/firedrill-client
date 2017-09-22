@@ -20,6 +20,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.tomitribe.auth.signatures.Signer;
 import org.tomitribe.firedrill.util.WeightedRandomResult;
+import org.tomitribe.util.Base64;
 
 import javax.annotation.PostConstruct;
 import javax.crypto.SecretKey;
@@ -30,6 +31,7 @@ import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -89,19 +91,19 @@ public class SignatureFilter implements ClientRequestFilter {
 
         final Alias alias = aliases.get();
 
-        final SecretKey secretKey = new SecretKeySpec(alias.getSecret().getBytes(), "hmacSHA256");
+        final SecretKey secretKey = new SecretKeySpec(alias.getSecret().getBytes(StandardCharsets.UTF_8), "HmacSHA256");
         final org.tomitribe.auth.signatures.Signature signature =
                 new org.tomitribe.auth.signatures.Signature(alias.getKeyId(), "hmac-sha256", null, "(request-target)",
-                                                            "digest", "date");
+                                                            "date", "digest");
 
         final Map<String, String> signHeaders = new HashMap<>();
         signHeaders.put(HttpHeaders.DATE, date);
         signHeaders.put("Digest", digest);
 
+
         final String path = requestContext.getUri().getPath();
         final org.tomitribe.auth.signatures.Signature sign =
-                new Signer(secretKey, signature).sign(requestContext.getMethod(),
-                                                      path, signHeaders);
+                new Signer(secretKey, signature).sign(requestContext.getMethod(), path, signHeaders);
 
         MultivaluedMap<String, Object> headers = requestContext.getHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, sign.toString());
@@ -117,7 +119,7 @@ public class SignatureFilter implements ClientRequestFilter {
 
     private String getDigest() {
         try {
-            return new String(getEncoder().encode(MessageDigest.getInstance("sha-256").digest("".getBytes("UTF-8"))));
+            return "SHA-256=" + new String(getEncoder().encode(MessageDigest.getInstance("sha-256").digest("".getBytes("UTF-8"))));
         } catch (Exception e) {
             return "";
         }

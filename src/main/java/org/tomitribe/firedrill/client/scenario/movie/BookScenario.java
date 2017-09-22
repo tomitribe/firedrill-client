@@ -16,7 +16,6 @@
  */
 package org.tomitribe.firedrill.client.scenario.movie;
 
-import org.tomitribe.firedrill.client.auth.oauth.OAuth;
 import org.tomitribe.firedrill.client.auth.signature.Signature;
 import org.tomitribe.firedrill.client.scenario.Endpoint;
 import org.tomitribe.firedrill.client.scenario.ScenarioInvoker;
@@ -37,14 +36,13 @@ import static org.tomitribe.firedrill.client.scenario.Endpoint.endpoint;
  * @author Roberto Cortez
  */
 @ApplicationScoped
-@OAuth
 @Signature
 public class BookScenario extends ScenarioInvoker {
     @Override
     protected List<Endpoint> getEndpoints() {
-        return Stream.of(endpoint("music/rest/musics", "GET"),
-                         endpoint("music/rest/musics/count", "GET"),
-                         endpoint("music/rest/musics/1", "GET"))
+        return Stream.of(endpoint("book/rest/books", "GET"),
+                         endpoint("book/rest/books/count", "GET"),
+                         endpoint("book/rest/books/1", "GET"))
                      .collect(collectingAndThen(toList(), Collections::unmodifiableList));
     }
 
