@@ -33,7 +33,7 @@
     <connection>scm:git:git@github.com:tomitribe/firedrill-client.git</connection>
     <url>scm:git:git@github.com:tomitribe/firedrill-client.git</url>
     <developerConnection>scm:git:git@github.com:tomitribe/firedrill-client.git</developerConnection>
-    <tag>twitter-1.0</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <repositories>
