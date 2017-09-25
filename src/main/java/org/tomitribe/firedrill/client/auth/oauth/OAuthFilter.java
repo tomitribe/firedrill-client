@@ -93,8 +93,8 @@ public class OAuthFilter implements ClientRequestFilter {
     private Optional<Token> getToken(final User user) {
         final Secret secret = secrets.get();
         final Form form = new Form();
-//        form.param("client_id", secret.getClientId());
-//        form.param("client_secret", secret.getClientSecret());
+        form.param("client_id", secret.getClientId());
+        form.param("client_secret", secret.getClientSecret());
         form.param("username", user.getUsername());
         form.param("password", user.getPassword());
         form.param("grant_type", "password");
@@ -104,8 +104,8 @@ public class OAuthFilter implements ClientRequestFilter {
     private Optional<Token> getRefreshToken(final Token token) {
         final Secret secret = secrets.get();
         final Form form = new Form();
-//        form.param("client_id", secret.getClientId());
-//        form.param("client_secret", secret.getClientSecret());
+        form.param("client_id", secret.getClientId());
+        form.param("client_secret", secret.getClientSecret());
         form.param("refresh_token", token.refresh_token);
         form.param("grant_type", "refresh_token");
         return postToken(form);
