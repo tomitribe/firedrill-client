@@ -62,8 +62,8 @@
   </distributionManagement>
 
   <properties>
-    <version.dependency.sheldon>0.8</version.dependency.sheldon>
-    <version.dependency.crest>0.3</version.dependency.crest>
+    <version.dependency.sheldon>0.9</version.dependency.sheldon>
+    <version.dependency.crest>0.5</version.dependency.crest>
     <version.dependency.firedrill>1.0</version.dependency.firedrill>
   </properties>
 
