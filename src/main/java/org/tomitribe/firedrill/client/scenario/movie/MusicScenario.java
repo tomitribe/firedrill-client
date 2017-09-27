@@ -16,7 +16,7 @@
  */
 package org.tomitribe.firedrill.client.scenario.movie;
 
-import org.tomitribe.firedrill.client.auth.signature.Signature;
+import org.tomitribe.firedrill.client.auth.basic.Basic;
 import org.tomitribe.firedrill.client.scenario.Endpoint;
 import org.tomitribe.firedrill.client.scenario.ScenarioInvoker;
 import org.tomitribe.firedrill.util.WeightedRandomResult;
@@ -36,7 +36,7 @@ import static org.tomitribe.firedrill.client.scenario.Endpoint.endpoint;
  * @author Roberto Cortez
  */
 @ApplicationScoped
-@Signature
+@Basic
 public class MusicScenario extends ScenarioInvoker {
     @Override
     protected List<Endpoint> getEndpoints() {

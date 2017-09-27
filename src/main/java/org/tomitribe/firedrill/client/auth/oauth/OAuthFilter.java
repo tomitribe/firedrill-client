@@ -161,8 +161,13 @@ public class OAuthFilter implements ClientRequestFilter {
                                            User.user("stan", "password_trey"),
                                            User.user("bebe", "password_jennifer"),
                                            User.user("sharon", "password_april"),
-                                           User.user("sheila", "password_mona"))
-                                       .collect(collectingAndThen(toList(), Collections::unmodifiableList));
+                                           User.user("sheila", "password_mona"),
+                                           User.user("ana", "password"),
+                                           User.user("bert", "password"),
+                                           User.user("Cassandra", "password"),
+                                           User.user("zoe", "password"))
+
+                .collect(collectingAndThen(toList(), Collections::unmodifiableList));
 
         final List<User> distributedUsers = new ArrayList<>();
         users.forEach(user -> {

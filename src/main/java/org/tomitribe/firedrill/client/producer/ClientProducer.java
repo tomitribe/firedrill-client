@@ -16,6 +16,8 @@
  */
 package org.tomitribe.firedrill.client.producer;
 
+import org.tomitribe.firedrill.client.auth.basic.Basic;
+import org.tomitribe.firedrill.client.auth.basic.BasicFilter;
 import org.tomitribe.firedrill.client.auth.oauth.OAuth;
 import org.tomitribe.firedrill.client.auth.oauth.OAuthFilter;
 import org.tomitribe.firedrill.client.auth.signature.Signature;
@@ -42,6 +44,8 @@ public class ClientProducer {
     private OAuthFilter oAuthFilter;
     @Inject
     private SignatureFilter signatureFilter;
+    @Inject
+    private BasicFilter basicFilter;
 
     @Produces
     public Client getClient(final InjectionPoint injectionPoint) {
@@ -53,6 +57,10 @@ public class ClientProducer {
 
         if (injectionPoint.getBean().getBeanClass().isAnnotationPresent(Signature.class)) {
             client.register(signatureFilter);
+        }
+
+        if (injectionPoint.getBean().getBeanClass().isAnnotationPresent(Basic.class)) {
+            client.register(basicFilter);
         }
 
         return client;
